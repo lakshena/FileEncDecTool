@@ -1,79 +1,64 @@
 import os
 from cryptography.fernet import Fernet, InvalidToken
-from key_manager import derive_key   # Student 1's function
+from key_manager import derive_key
 
-def decrypt_file(encrypted_path: str, password: str, output_path: str = None) -> None:
+
+def decrypt_file(encrypted_path: str, password: str, output_path: str = None) -> str:
     """
-    Decrypt a .enc file created by the encryption module.
+    Decrypt a file that was encrypted using the encryptor module.
 
-    Args:
-        encrypted_path: Path to the encrypted file (must end with .enc)
-        password: The password used during encryption
-        output_path: Optional path for the decrypted file.
-                     If None, the .enc extension is removed.
+    The first 16 bytes of the encrypted file contain the salt.
+    The remaining bytes contain the Fernet-encrypted data.
     """
 
-    # --- 1. Basic checks ---
-    if not os.path.isfile(encrypted_path):
-        raise FileNotFoundError(f"Encrypted file not found: {encrypted_path}")
-
-    if not encrypted_path.lower().endswith(".enc"):
-        print("Warning: File does not have .enc extension")
-
-    # --- 2. Read the entire encrypted file ---
-    with open(encrypted_path, "rb") as f:
-        data = f.read()
-
-    if len(data) < 16:
-        raise ValueError("File is too small or corrupted (missing salt)")
-
-    # --- 3. Extract salt (first 16 bytes) and ciphertext ---
-    salt = data[:16]
-    ciphertext = data[16:]
-
-    # --- 4. Derive the key using Student 1's function ---
-    key = derive_key(password, salt)
-
-    # --- 5. Decrypt with Fernet ---
     try:
+        # Check if the encrypted file exists
+        if not os.path.isfile(encrypted_path):
+            raise FileNotFoundError(f"Encrypted file not found: {encrypted_path}")
+
+        # Read the entire encrypted file
+        with open(encrypted_path, "rb") as file:
+            data = file.read()
+
+        if len(data) < 16:
+            raise ValueError("File is too small or corrupted (missing salt).")
+
+        # Extract salt (first 16 bytes) and the encrypted content
+        salt = data[:16]
+        encrypted_data = data[16:]
+
+        # Derive the key using the same method as encryption
+        key = derive_key(password, salt)
+
+        # Decrypt the data
         fernet = Fernet(key)
-        plaintext = fernet.decrypt(ciphertext)
+        decrypted_data = fernet.decrypt(encrypted_data)
+
+        # Decide the output filename
+        if output_path is None:
+            if encrypted_path.lower().endswith(".enc"):
+                output_path = encrypted_path[:-4]          # remove .enc
+            else:
+                output_path = encrypted_path + ".decrypted"
+
+        # Write the original file back
+        with open(output_path, "wb") as file:
+            file.write(decrypted_data)
+
+        return output_path
+
     except InvalidToken:
-        raise ValueError("Decryption failed: wrong password or file has been tampered with.")
+        raise ValueError("Decryption failed: Wrong password or file has been tampered with.")
 
-    # --- 6. Decide output filename ---
-    if output_path is None:
-        # Remove .enc extension
-        if encrypted_path.lower().endswith(".enc"):
-            output_path = encrypted_path[:-4]
-        else:
-            output_path = encrypted_path + ".decrypted"
+    except FileNotFoundError as e:
+        raise FileNotFoundError(str(e))
 
-    # --- 7. Write the original file ---
-    with open(output_path, "wb") as f:
-        f.write(plaintext)
+    except PermissionError:
+        raise PermissionError(f"Permission denied while accessing: {encrypted_path}")
 
-    print(f"✓ Decryption successful!")
-    print(f"  Output file → {os.path.abspath(output_path)}")
+    except OSError as e:
+        raise OSError(f"File operation failed: {e}")
 
 
-# ------------------------------------------------------------
-# Simple CLI for testing (you can remove this later)
-# ------------------------------------------------------------
 if __name__ == "__main__":
-    import sys
-
-    if len(sys.argv) < 3:
-        print("Usage: python decryptor.py <file.enc> <password> [output_file]")
-        sys.exit(1)
-
-    enc_file = sys.argv[1]
-    password = sys.argv[2]
-    out_file = sys.argv[3] if len(sys.argv) > 3 else None
-
-    try:
-        decrypt_file(enc_file, password, out_file)
-    except (FileNotFoundError, ValueError) as e:
-        print(f"✗ Error: {e}")
-    except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+    print("Decryption module loaded successfully.")
