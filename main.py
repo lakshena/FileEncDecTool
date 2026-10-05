@@ -1,4 +1,5 @@
 import os
+import getpass
 from encryptor import encrypt_file
 from decryptor import decrypt_file
 
@@ -23,7 +24,7 @@ def main():
         if choice == "1":
             print("\n--- ENCRYPT FILE ---")
             file_path = input("Enter the path of the file to encrypt: ").strip()
-            password = input("Enter password: ").strip()
+            password = getpass.getpass("Enter password: ")   # ← Password is hidden
 
             if not file_path or not password:
                 print("\nError: File path and password cannot be empty.")
@@ -41,7 +42,7 @@ def main():
         elif choice == "2":
             print("\n--- DECRYPT FILE ---")
             file_path = input("Enter the path of the .enc file: ").strip()
-            password = input("Enter password: ").strip()
+            password = getpass.getpass("Enter password: ")   # ← Password is hidden
 
             if not file_path or not password:
                 print("\nError: File path and password cannot be empty.")
