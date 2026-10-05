@@ -5,7 +5,6 @@ A simple command-line tool that allows you to securely encrypt and decrypt any f
 Once a file is encrypted, its contents become unreadable. Only someone who knows the correct password can decrypt it and restore the original file.
 
 ---
-
 ## Features
 
 - Encrypt any file (text, PDF, image, etc.)
@@ -16,7 +15,6 @@ Once a file is encrypted, its contents become unreadable. Only someone who knows
 - Password input is hidden while typing
 
 ---
-
 ## Project Structure
 
 ```
@@ -29,7 +27,6 @@ FileEncDecTool/
 ```
 
 ---
-
 ## How It Works
 
 ### Encryption Process:
@@ -47,7 +44,6 @@ FileEncDecTool/
 4. The file is decrypted and restored
 
 ---
-
 ## Requirements
 
 - Python 3.7 or higher
@@ -60,7 +56,6 @@ pip install cryptography
 ```
 
 ---
-
 ## How to Run
 
 ```bash
@@ -81,7 +76,6 @@ You will see a menu:
 ```
 
 ### Example Usage
-
 **Encrypt a file:**
 ```
 Enter your choice (1-3): 1
@@ -99,7 +93,6 @@ Success! Decrypted file created: test.txt
 ```
 
 ---
-
 ## Important Notes
 
 - The password is **never stored** in the encrypted file.
@@ -110,7 +103,6 @@ Success! Decrypted file created: test.txt
 ---
 
 ## Modules Explanation
-
 | Module            | Responsibility                              |
 |-------------------|---------------------------------------------|
 | `key_manager.py`  | Generates salt and derives encryption key   |
