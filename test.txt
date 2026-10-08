@@ -1,1 +1,19 @@
-This is a secret message for testing encryption.
+File Encryption and Decryption Project
+
+This is a sample text file created to test the file encryption and decryption system.
+
+The purpose of this project is to securely encrypt files using a password and decrypt them when the correct password is provided.
+
+File encryption converts readable data into an unreadable format so that unauthorized users cannot access the original information.
+
+After encryption, the original file is converted into an encrypted file with the .enc extension.
+
+The encrypted file can be restored to its original form by using the correct password during the decryption process.
+
+This test file contains multiple lines of text to verify that the encryption and decryption process works correctly for larger amounts of data.
+
+The system should preserve the original content after successful decryption.
+
+Encryption successful.
+Decryption successful.
+File integrity verified.
